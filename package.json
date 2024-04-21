@@ -1,5 +1,10 @@
 {
     "name" : "ava-openapi",
+    "repository": {
+      "type": "git",
+      "url": "git+https://github.com/arlac77/ava-openapi.git"
+    },
+
     "template": {
         "inheritFrom": [
           "arlac77/template-arlac77-github",
