@@ -1,17 +1,60 @@
 {
-    "name" : "ava-openapi",
-    "repository": {
-      "type": "git",
-      "url": "git+https://github.com/arlac77/ava-openapi.git"
-    },
-
-    "template": {
-        "inheritFrom": [
-          "arlac77/template-arlac77-github",
-          "arlac77/template-browser-ava",
-          "arlac77/template-javascript-component",
-          "arlac77/template-node-component",
-          "arlac77/template-typescript"
-        ]
-      }
+  "name": "ava-openapi",
+  "version": "0.0.0-semantic-release",
+  "publishConfig": {
+    "access": "public"
+  },
+  "exports": {
+    ".": {
+      "default": "{{main}}"
     }
+  },
+  "description": "ava openapi testing support",
+  "contributors": [
+    {
+      "name": "Markus Felten",
+      "email": "markus.felten@gmx.de"
+    }
+  ],
+  "license": "BSD-2-Clause",
+  "scripts": {
+    "test": "npm run test:browser-ava && npm run test:ava",
+    "test:browser-ava": "--overwrite-- browser-ava --headless --no-keep-open tests/*-ava.mjs tests/*-ava-browser.mjs",
+    "cover": "--overwrite-- c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
+    "test:ava": "--overwrite-- ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs",
+    "docs": "documentation readme --section=API ./src/**/*.mjs",
+    "lint": "npm run lint:docs && npm run lint:typescript",
+    "lint:docs": "documentation lint ./src/**/*.mjs",
+    "prepare": "npm run prepare:typescript",
+    "prepare:typescript": "--overwrite-- tsc --allowJs --declaration --emitDeclarationOnly --declarationDir types --resolveJsonModule -t esnext -m esnext --module nodenext --moduleResolution nodenext --rootDir src ./src**/*.mjs",
+    "lint:typescript": "--overwrite-- tsc --allowJs --checkJs --noEmit --resolveJsonModule -t esnext -m esnext --module nodenext --moduleResolution nodenext ./src**/*.mjs"
+  },
+  "devDependencies": {
+    "semantic-release": "^23.0.8",
+    "browser-ava": "^2.2.8",
+    "c8": "^9.1.0",
+    "ava": "^6.1.2",
+    "documentation": "^14.0.3",
+    "typescript": "^5.4.5"
+  },
+  "engines": {
+    "node": ">=20.12.1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/arlac77/ava-openapi.git"
+  },
+  "bugs": {
+    "url": "https://github.com/arlac77/ava-openapi/issues"
+  },
+  "homepage": "https://github.com/arlac77/ava-openapi#readme",
+  "template": {
+    "inheritFrom": [
+      "arlac77/template-arlac77-github",
+      "arlac77/template-browser-ava",
+      "arlac77/template-javascript-component",
+      "arlac77/template-node-component",
+      "arlac77/template-typescript"
+    ]
+  }
+}
