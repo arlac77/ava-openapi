@@ -2,8 +2,11 @@ import SwaggerParser from "@apidevtools/swagger-parser";
 import { Validator } from "jsonschema";
 import { streamToString } from "browser-stream-util";
 
-export async function loadOpenAPI(t, path) {
-  t.context.api = await SwaggerParser.validate(path);
+export async function loadOpenAPI(t, url) {
+  t.context.api = await SwaggerParser.validate(url);
+  if (!t.context.url) {
+    t.context.url = t.context.api.servers[0].url;
+  }
 }
 
 export function asArray(value) {
@@ -11,7 +14,7 @@ export function asArray(value) {
 }
 
 export async function assertOpenapiPath(t, path, allExpected) {
-  const definionPerPath = t.context.api.paths[path];
+  const definionPerPath = t.context.api.paths?.[path];
   t.truthy(definionPerPath, `Does not exists in api: ${path}`);
 
   const parameters = definionPerPath.parameters || [];
@@ -29,8 +32,12 @@ export async function assertOpenapiPath(t, path, allExpected) {
           e => e[definitionResponseCode]
         ) || {};
 
-      const headers = { Authorization: `Bearer ${t.context.token}` };
+      const headers = {};
       const options = { method, headers };
+
+      if (t.context.token) {
+        headers.Authorization = `Bearer ${t.context.token}`;
+      }
 
       let pathParameters = {};
 
@@ -53,10 +60,10 @@ export async function assertOpenapiPath(t, path, allExpected) {
           pathParameters = {};
           break;
         case "406":
-          options.headers.accept = 'application/xml';
+          options.headers.accept = "application/xml";
           extraTitle = " none acceptable type";
-        break;
-  
+          break;
+
         case "415":
           headers["Content-Type"] = "application/unknown";
           options.body = "unknown";
