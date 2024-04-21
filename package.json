@@ -13,8 +13,8 @@
   },
   "description": "ava openapi testing support",
   "keywords": [
-    "openapi",
-    "ava"
+    "ava",
+    "openapi"
   ],
   "contributors": [
     {
@@ -24,16 +24,21 @@
   ],
   "license": "BSD-2-Clause",
   "scripts": {
+    "prepare": "npm run prepare:typescript",
+    "prepare:typescript": "tsc --allowJs --declaration --emitDeclarationOnly --declarationDir types --resolveJsonModule -t esnext -m esnext --module nodenext --moduleResolution nodenext --rootDir src ./src**/*.mjs",
     "test": "npm run test:browser-ava && npm run test:ava",
-    "test:browser-ava": "--overwrite-- browser-ava --headless --no-keep-open tests/*-ava.mjs tests/*-ava-browser.mjs",
-    "cover": "--overwrite-- c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
-    "test:ava": "--overwrite-- ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs",
+    "test:browser-ava": "browser-ava --headless --no-keep-open tests/*-ava.mjs tests/*-ava-browser.mjs",
+    "test:ava": "ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs",
+    "cover": "c8 -x 'tests/**/*' --temp-directory build/tmp ava --timeout 4m tests/*-ava.mjs tests/*-ava-node.mjs && c8 report -r lcov -o build/coverage --temp-directory build/tmp",
     "docs": "documentation readme --section=API ./src/**/*.mjs",
     "lint": "npm run lint:docs && npm run lint:typescript",
     "lint:docs": "documentation lint ./src/**/*.mjs",
-    "prepare": "npm run prepare:typescript",
-    "prepare:typescript": "--overwrite-- tsc --allowJs --declaration --emitDeclarationOnly --declarationDir types --resolveJsonModule -t esnext -m esnext --module nodenext --moduleResolution nodenext --rootDir src ./src**/*.mjs",
-    "lint:typescript": "--overwrite-- tsc --allowJs --checkJs --noEmit --resolveJsonModule -t esnext -m esnext --module nodenext --moduleResolution nodenext ./src**/*.mjs"
+    "lint:typescript": "tsc --allowJs --checkJs --noEmit --resolveJsonModule -t esnext -m esnext --module nodenext --moduleResolution nodenext ./src**/*.mjs"
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "browser-stream-util": "^1.2.0",
+    "jsonschema": "^1.4.1"
   },
   "devDependencies": {
     "ava": "^6.1.2",
@@ -62,10 +67,5 @@
       "arlac77/template-node-component",
       "arlac77/template-typescript"
     ]
-  },
-  "dependencies": {
-    "@apidevtools/swagger-parser": "^10.1.0",
-    "browser-stream-util": "^1.2.0",
-    "jsonschema": "^1.4.1"
   }
 }
