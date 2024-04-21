@@ -32,11 +32,11 @@ export async function assertOpenapiPath(t, path, allExpected) {
           e => e[definitionResponseCode]
         ) || {};
 
-      const headers = {};
-      const options = { method, headers };
+      const headers = new Headers();
+      const options = { method, headers};
 
       if (t.context.token) {
-        headers.Authorization = `Bearer ${t.context.token}`;
+        headers.append("Authorization", `Bearer ${t.context.token}`);
       }
 
       let pathParameters = {};
@@ -53,14 +53,14 @@ export async function assertOpenapiPath(t, path, allExpected) {
       switch (definitionResponseCode) {
         case "401":
           extraTitle = " unauthorized";
-          delete headers.Authorization;
+          headers.delete('Authorization');
           break;
         case "404":
           extraTitle = " without parameters";
           pathParameters = {};
           break;
         case "406":
-          options.headers.accept = "application/xml";
+          headers.append("accept", "application/xml");
           extraTitle = " none acceptable type";
           break;
 
@@ -70,7 +70,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
           break;
         default:
           if (expected?.request?.body) {
-            headers["Content-Type"] = "application/json";
+            headers.append("Content-Type", "application/json");
             options.body = JSON.stringify(expected.request.body);
           }
       }
