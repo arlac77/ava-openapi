@@ -9,5 +9,33 @@
 [![Commitizen friendly](https://img.shields.io/badge/commitizen-friendly-brightgreen.svg)](http://commitizen.github.io/cz-cli/)
 [![Known Vulnerabilities](https://snyk.io/test/github/arlac77/ava-openapi/badge.svg)](https://snyk.io/test/github/arlac77/ava-openapi)
 [![Coverage Status](https://coveralls.io/repos/arlac77/ava-openapi/badge.svg)](https://coveralls.io/github/arlac77/ava-openapi)
+
 # ava-openapi
+
 ava openapi testing support
+
+```js
+import test from "ava";
+import { loadOpenAPI, openapiPathTest } from "ava-openapi";
+
+test.before(async t => {
+  await loadOpenAPI(
+    t,
+    "https://raw.githubusercontent.com/github/rest-api-description/main/descriptions/api.github.com/api.github.com.2022-11-28.json"
+  );
+});
+
+test(openapiPathTest, "/", {});
+```
+
+# install
+
+With [npm](http://npmjs.org) do:
+
+```shell
+npm install ava-openapi
+```
+
+# license
+
+BSD-2-Clause
