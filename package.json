@@ -4,12 +4,18 @@
   "publishConfig": {
     "access": "public"
   },
+  "types": "./types/openapi.d.mts",
   "exports": {
     ".": {
-      "default": "{{main}}"
+      "default": "./src/openapi.mjs",
+      "types": "./types/openapi.d.mts"
     }
   },
   "description": "ava openapi testing support",
+  "keywords": [
+    "openapi",
+    "ava"
+  ],
   "contributors": [
     {
       "name": "Markus Felten",
@@ -30,15 +36,15 @@
     "lint:typescript": "--overwrite-- tsc --allowJs --checkJs --noEmit --resolveJsonModule -t esnext -m esnext --module nodenext --moduleResolution nodenext ./src**/*.mjs"
   },
   "devDependencies": {
-    "semantic-release": "^23.0.8",
+    "ava": "^6.1.2",
     "browser-ava": "^2.2.8",
     "c8": "^9.1.0",
-    "ava": "^6.1.2",
     "documentation": "^14.0.3",
+    "semantic-release": "^23.0.8",
     "typescript": "^5.4.5"
   },
   "engines": {
-    "node": ">=20.12.1"
+    "node": ">=20.12.2"
   },
   "repository": {
     "type": "git",
@@ -56,5 +62,10 @@
       "arlac77/template-node-component",
       "arlac77/template-typescript"
     ]
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "^10.1.0",
+    "browser-stream-util": "^1.2.0",
+    "jsonschema": "^1.4.1"
   }
 }
