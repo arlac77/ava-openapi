@@ -13,6 +13,15 @@ export function asArray(value) {
   return Array.isArray(value) ? value : value === undefined ? [] : [value];
 }
 
+/**
+ * Strips away etag flags (weak and the like)
+ * @param {string|null} etag
+ * @returns {string|undefined} raw etag
+ */
+export function rawTagData(etag) {
+  return etag?.replace(/W\//, "");
+}
+
 export async function assertOpenapiPath(t, path, allExpected) {
   const definionPerPath = t.context.api.paths?.[path];
   t.truthy(definionPerPath, `Does not exists in api: ${path}`);
@@ -33,7 +42,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
         ) || {};
 
       const headers = new Headers();
-      const options = { method, headers};
+      const options = { method, headers };
 
       if (t.context.token) {
         headers.append("Authorization", `Bearer ${t.context.token}`);
@@ -53,7 +62,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
       switch (definitionResponseCode) {
         case "401":
           extraTitle = " unauthorized";
-          headers.delete('Authorization');
+          headers.delete("Authorization");
           break;
         case "404":
           extraTitle = " without parameters";
@@ -63,9 +72,8 @@ export async function assertOpenapiPath(t, path, allExpected) {
           headers.append("accept", "application/xml");
           extraTitle = " none acceptable type";
           break;
-
         case "415":
-          headers["Content-Type"] = "application/unknown";
+          headers.append("Content-Type", "application/unknown");
           options.body = "unknown";
           break;
         default:
@@ -80,7 +88,16 @@ export async function assertOpenapiPath(t, path, allExpected) {
         (match, a) => pathParameters[a]
       );
 
-      const response = await fetch(t.context.url + url, options);
+      let response = await fetch(t.context.url + url, options);
+
+      if (definitionResponseCode === "304") {
+        const etag = rawTagData(response.headers.get("etag"));
+        if (etag) {
+          extraTitle = " etag";
+          headers.append("If-None-Match", etag);
+          response = await fetch(t.context.url + url, options);
+        }
+      }
 
       t.log(
         `${method} ${url} ${
@@ -121,9 +138,11 @@ export async function assertOpenapiPath(t, path, allExpected) {
               );
 
               // console.log(body,validationResult);
-              t.log(validationResult.errors.join(","));
+              if (validationResult.errors.length > 0) {
+                t.log(validationResult.errors.join(","));
 
-              t.is(validationResult.errors.length, 0, "validation errors");
+                t.is(validationResult.errors.length, 0, "validation errors");
+              }
               break;
 
             default:
@@ -135,8 +154,22 @@ export async function assertOpenapiPath(t, path, allExpected) {
   }
 }
 
+/**
+ *
+ * @param {*} t
+ * @param {string|RegExp} path
+ * @param {Object} expected
+ */
 export async function openapiPathTest(t, path, expected = {}) {
-  await assertOpenapiPath(t, path, expected);
+  if (path instanceof RegExp) {
+    for (const matchingPath of Object.keys(t.context.api.paths).filter(p =>
+      p.match(path)
+    )) {
+      await assertOpenapiPath(t, matchingPath, expected);
+    }
+  } else {
+    await assertOpenapiPath(t, path, expected);
+  }
 }
 
 openapiPathTest.title = (providedTitle = "openapi", path, expected = {}) =>

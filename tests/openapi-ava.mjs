@@ -9,3 +9,4 @@ test.before(async t => {
 });
 
 test(openapiPathTest, "/", {});
+test(openapiPathTest, /emo.*s/, {});
