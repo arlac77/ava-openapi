@@ -14,7 +14,9 @@
   "description": "ava openapi testing support",
   "keywords": [
     "ava",
-    "openapi"
+    "openapi",
+    "swagger",
+    "response validation"
   ],
   "contributors": [
     {
