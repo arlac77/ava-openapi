@@ -59,7 +59,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
       for (const parameter of parameters) {
         if (parameter.in === "path") {
           pathParameters[parameter.name] =
-            allExpected?.[method]?.parameters?.[parameter.name];
+            allExpected[method]?.parameters?.[parameter.name];
         }
       }
 
@@ -83,15 +83,17 @@ export async function assertOpenapiPath(t, path, allExpected) {
           options.body = "unknown";
           break;
         default:
-          if (expected?.request?.body) {
-            switch (typeof expected.request.body) {
+          let body = expected[definitionResponseCode]?.request?.body || expected.request?.body
+
+          if (body) {
+            switch (typeof body) {
               case "object":
                 headers.append("Content-Type", "application/json");
-                options.body = JSON.stringify(expected.request.body);
+                options.body = JSON.stringify(body);
                 break;
               case "string":
                 headers.append("Content-Type", "text/plain");
-                options.body = expected.request.body;
+                options.body = body;
             }
           }
       }
