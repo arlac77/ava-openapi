@@ -23,10 +23,10 @@ export function rawTagData(etag) {
 }
 
 /**
- * 
- * @param {*} t 
- * @param {string} path 
- * @param {Object} allExpected 
+ *
+ * @param {*} t
+ * @param {string} path
+ * @param {Object} allExpected
  */
 export async function assertOpenapiPath(t, path, allExpected) {
   const definionPerPath = t.context.api.paths?.[path];
@@ -132,35 +132,49 @@ export async function assertOpenapiPath(t, path, allExpected) {
       );
 
       let body = response.body ? await streamToString(response.body) : "";
+      let contentType = response.headers.get("content-type");
+      contentType = contentType?.split(/\s*;\s*/)[0];
+
+      const definitionContent = definitionResponse?.content?.[contentType];
+
+      if (!definitionContent && response.status === "200") {
+        t.fail(
+          `Unsupported content type '${contentType}' ${response.status} ${method} ${path}`
+        );
+      }
 
       if (definitionResponse?.content) {
-        for (const [definitionContentType, definitionContent] of Object.entries(
-          definitionResponse.content
-        )) {
-          const e = expected[definitionResponseCode];
+        const e = expected[definitionResponseCode];
 
-          switch (definitionContentType) {
-            case "application/json":
-              body = JSON.parse(body);
+        switch (contentType) {
+          case "application/json":
+            body = JSON.parse(body);
 
-            case "text/plain":
-            case "application/text":
+          case "text/plain":
+          case "application/text":
+            if (definitionContent?.schema) {
               const validationResult = validator.validate(
                 body,
                 definitionContent.schema
               );
 
-              // console.log(body,validationResult);
+              /*console.log(
+                body,
+                contentType,
+                validationResult
+              );*/
               if (validationResult.errors.length > 0) {
                 t.log(validationResult.errors.join(","));
 
                 t.is(validationResult.errors.length, 0, "validation errors");
               }
-              break;
+            }
+            break;
 
-            default:
-              t.log(`Unknown content type ${definitionContentType} ${method}`);
-          }
+          default:
+            t.log(
+              `Unsupported content type '${contentType}' ${method} ${path}`
+            );
         }
       }
     }
