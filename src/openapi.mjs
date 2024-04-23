@@ -22,6 +22,12 @@ export function rawTagData(etag) {
   return etag?.replace(/W\//, "");
 }
 
+/**
+ * 
+ * @param {*} t 
+ * @param {string} path 
+ * @param {Object} allExpected 
+ */
 export async function assertOpenapiPath(t, path, allExpected) {
   const definionPerPath = t.context.api.paths?.[path];
   t.truthy(definionPerPath, `Does not exists in api: ${path}`);
@@ -78,8 +84,15 @@ export async function assertOpenapiPath(t, path, allExpected) {
           break;
         default:
           if (expected?.request?.body) {
-            headers.append("Content-Type", "application/json");
-            options.body = JSON.stringify(expected.request.body);
+            switch (typeof expected.request.body) {
+              case "object":
+                headers.append("Content-Type", "application/json");
+                options.body = JSON.stringify(expected.request.body);
+                break;
+              case "string":
+                headers.append("Content-Type", "text/plain");
+                options.body = expected.request.body;
+            }
           }
       }
 
