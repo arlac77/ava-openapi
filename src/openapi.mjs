@@ -83,7 +83,9 @@ export async function assertOpenapiPath(t, path, allExpected) {
           options.body = "unknown";
           break;
         default:
-          let body = expected[definitionResponseCode]?.request?.body || expected.request?.body
+          let body =
+            expected[definitionResponseCode]?.request?.body ||
+            expected.request?.body;
 
           if (body) {
             switch (typeof body) {
@@ -105,7 +107,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
 
       let response = await fetch(t.context.url + url, options);
 
-      if (definitionResponseCode === "304") {
+      if (definitionResponseCode == "304") {
         const etag = rawTagData(response.headers.get("etag"));
         if (etag) {
           extraTitle = " etag";
@@ -139,7 +141,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
 
       const definitionContent = definitionResponse?.content?.[contentType];
 
-      if (!definitionContent && response.status === "200") {
+      if (!definitionContent && response.status == 200) {
         t.fail(
           `Unsupported content type '${contentType}' ${response.status} ${method} ${path}`
         );
@@ -160,11 +162,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
                 definitionContent.schema
               );
 
-              /*console.log(
-                body,
-                contentType,
-                validationResult
-              );*/
+              // console.log(body, contentType, validationResult);
               if (validationResult.errors.length > 0) {
                 t.log(validationResult.errors.join(","));
 
