@@ -165,7 +165,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
               // console.log(body, contentType, validationResult);
               if (validationResult.errors.length > 0) {
                 t.log(validationResult.errors.join(","));
-
+                t.log(body);
                 t.is(validationResult.errors.length, 0, "validation errors");
               }
             }
