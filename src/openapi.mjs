@@ -7,6 +7,10 @@ export async function loadOpenAPI(t, url) {
   if (!t.context.url) {
     t.context.url = t.context.api.servers[0].url;
   }
+
+  if (!t.context.parameters) {
+    t.context.parameters = {};
+  }
 }
 
 export function asArray(value) {
@@ -59,7 +63,8 @@ export async function assertOpenapiPath(t, path, allExpected) {
       for (const parameter of parameters) {
         if (parameter.in === "path") {
           pathParameters[parameter.name] =
-            allExpected[method]?.parameters?.[parameter.name];
+            allExpected[method]?.parameters?.[parameter.name] ||
+            t.context.parameters[parameter.name];
         }
       }
 
