@@ -64,6 +64,7 @@ export async function assertOpenapiPath(t, path, allExpected) {
         if (parameter.in === "path") {
           pathParameters[parameter.name] =
             allExpected[method]?.parameters?.[parameter.name] ||
+            allExpected.parameters?.[parameter.name] ||
             t.context.parameters[parameter.name];
         }
       }
