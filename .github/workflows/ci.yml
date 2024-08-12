@@ -49,7 +49,8 @@ jobs:
           node-version: 20.15.0
           cache: npm
           cache-dependency-path: package-lock.json
-      - run: npx playwright install
+      - name: install playwright
+        run: npx playwright install
       - run: npm run test:browser-ava --if-present
         env:
           BROWSER: ${{ matrix.browser }}
