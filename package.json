@@ -7,8 +7,8 @@
   "types": "./types/openapi.d.mts",
   "exports": {
     ".": {
-      "default": "./src/openapi.mjs",
-      "types": "./types/openapi.d.mts"
+      "types": "./types/openapi.d.mts",
+      "default": "./src/openapi.mjs"
     }
   },
   "description": "ava openapi testing support",
