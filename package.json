@@ -42,7 +42,7 @@
     "jsonschema": "^1.5.0"
   },
   "devDependencies": {
-    "@types/node": "^22.15.27",
+    "@types/node": "^22.15.29",
     "ava": "^6.3.0",
     "browser-ava": "^2.3.7",
     "c8": "^10.1.3",
